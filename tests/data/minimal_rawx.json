@@ -1,0 +1,33 @@
+{
+     "network":{
+         "caseid":{
+             "fields": ["ic", "sbase", "rev", "xfrrat", "nxfrat", "basfrq", "title1"],
+             "data": [0, 100.00, 35, 0, 0, 60.00, "PSS(R)E Minimum RAWX Case"]
+         },
+         "bus":{
+             "fields": ["ibus", "name", "baskv", "ide"],
+             "data": [
+                 [1, "Slack-Bus", 138.0, 3],
+                 [2, "Load-Bus", 138.0, 1]
+             ]
+         },
+         "load":{
+             "fields": ["ibus", "loadid", "stat", "pl", "ql"],
+             "data": [
+                 [2, "1", 1, 40.0, 15.0]
+             ]
+         },
+         "generator":{
+             "fields": ["ibus", "machid", "pg", "qg"],
+             "data": [
+                 [1, "1", 40.35, 10.87]
+             ]
+         },
+         "acline":{
+             "fields":["ibus", "jbus", "ckt", "rpu", "xpu", "bpu"],
+             "data":[
+                 [1, 2, "1", 0.01938, 0.05917, 0.05280]
+             ]
+         }
+    }
+}
