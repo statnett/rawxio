@@ -32,9 +32,18 @@ def hex_uuid(value: Hashable) -> str:
 
 def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
     """
-    Read data from rawx format. If a dataset has defined primary keys in the RAWX
+    Read data from rawx format. The index of the returned dataframe is constructed in the
+    following priotized order
+
+    1. mrid (Master Resource Identifier) is used if present in a column
+    2. uid (Unique Identifier) is used if present in a column
+    3. If the table has primary keys, a uid is constructed by hashing the tuple of
+        primary keys
+    4. If none of the above apply, no index is set
+
+    If a dataset has defined primary keys in the RAWX
     documentation, an index constructed by hashing the tuple of primary keys is added.
-    The name of index is mrid (Master Resource Unique ID). If an mrid alrady exists,
+    The name of index is uid (Unique Identifier). If an uid alrady exists,
     it will be used as index
     """
     with open(fname, "r") as infile:
@@ -49,12 +58,14 @@ def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
 
         if "mrid" in df.columns:
             df = df.set_index("mrid")
+        elif "uid" in df.columns:
+            df = df.set_index("uid")
         elif has_primary_key(key):
             # The frame has primary keys. We produce a hash value to use for index based
             # on the primary keys
             pk_fields = list(set(get_pk_fields(key)).intersection(df.columns))
             index = [hex_uuid(t) for t in df[sorted(pk_fields)].itertuples()]
-            df = df.set_index(pd.Index(index, name="mrid"))
+            df = df.set_index(pd.Index(index, name="uid"))
         result[key] = df
     return result
 

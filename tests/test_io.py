@@ -16,8 +16,8 @@ def test_read():
     result = read_rawx(minimal_rawx())
     assert len(result) == 5
 
-    with_mrid = ("bus", "load", "generator", "acline")
-    assert all(result[k].index.name == "mrid" for k in with_mrid)
+    with_uid = ("bus", "load", "generator", "acline")
+    assert all(result[k].index.name == "uid" for k in with_uid)
 
 
 def test_read_write_round_trip(tmpdir):
@@ -50,3 +50,12 @@ def test_raise_on_missing():
     msg = "The following fields must be present for data frame bus: {'ibus'}. Got ['a']"
 
     assert msg in str(exc)
+
+
+@pytest.mark.parametrize("index_name", ["mrid", "uid"])
+def test_read_pick_up_index(tmpdir, index_name):
+    df = pd.DataFrame({"ibus": 1}, index=pd.Index(["0xab"], name=index_name))
+    out = tmpdir / "rawx.json"
+    write_rawx(out, {"bus": df})
+    result = read_rawx(out)
+    assert result["bus"].index.name == index_name
