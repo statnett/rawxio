@@ -6,7 +6,7 @@ authors = ["Statnett Datascience <Datascience.Drift@Statnett.no>"]
 repository = "https://github.com/statnett/psseio.git"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 pandas = "*"
 
 [tool.poetry.dev-dependencies]
