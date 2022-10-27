@@ -1,11 +1,13 @@
 """Convert between base case and PSS/E rawx format.
 
 """
+import hashlib
 import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, Hashable, List, Union
+from typing import Any, Dict, List, Union
+from uuid import UUID
 
 import pandas as pd
 
@@ -26,8 +28,10 @@ def get_rawx_record_type(data: Union[List[Any], List[List[Any]]]) -> DataSetType
     return DataSetType.DATA_SET if isinstance(data[0], list) else DataSetType.PARAMETER_SET
 
 
-def hex_uuid(value: Hashable) -> str:
-    return hex(hash(value) + HASH_SHIFT)
+def uuid(value: Any) -> str:
+    h = hashlib.md5(usedforsecurity=False)
+    h.update(repr(value).encode("utf-8"))
+    return str(UUID(bytes=h.digest()))
 
 
 def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
@@ -64,7 +68,7 @@ def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
             # The frame has primary keys. We produce a hash value to use for index based
             # on the primary keys
             pk_fields = list(set(get_pk_fields(key)).intersection(df.columns))
-            index = [hex_uuid(t) for t in df[sorted(pk_fields)].itertuples()]
+            index = [uuid(t) for t in df[sorted(pk_fields)].itertuples()]
             df = df.set_index(pd.Index(index, name="uid"))
         result[key] = df
     return result
