@@ -4,8 +4,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from psseio.psse import raise_on_missing_required_field, read_rawx, write_rawx
-from psseio.utils import one2zero_indexed, zero2one_indexed
+from rawxio.rawx import raise_on_missing_required_field, read_rawx, write_rawx
+from rawxio.utils import one2zero_indexed, zero2one_indexed
 
 
 def minimal_rawx() -> Path:

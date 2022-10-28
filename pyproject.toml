@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "psseio"
+name = "rawxio"
 version = "0.0.0"
 description = "Import/Export rawx"
 authors = ["Statnett Datascience <Datascience.Drift@Statnett.no>"]
-repository = "https://github.com/statnett/psseio.git"
+repository = "https://github.com/statnett/rawxio.git"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -65,7 +65,7 @@ precision = 2
 
 [tool.coverage.run]
 branch = true
-source = ["psseio"]
+source = ["rawxio"]
 
 [tool.pytest.ini_options]
 log_file = "pytest.log"

@@ -3,13 +3,13 @@
 ## Installation
 
 ```
-pip install psseio
+pip install rawxio
 ```
 
 You can also install the in-development version with::
 
 ```
-pip install psseio
+pip install rawxio
 ```
 
 ## Documentation
@@ -17,7 +17,7 @@ pip install psseio
 To use the project:
 
 ```python
-import psseio
+import rawxio
 ```
 
 ## Development

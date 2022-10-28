@@ -4,14 +4,13 @@
 import hashlib
 import json
 import logging
-import sys
 from pathlib import Path
 from typing import Any, Dict, List, Union
 from uuid import UUID
 
 import pandas as pd
 
-from psseio.data_model import (
+from rawxio.data_model import (
     PARAMETER_SETS,
     DataSetType,
     get_pk_fields,
@@ -20,8 +19,6 @@ from psseio.data_model import (
 )
 
 logger = logging.getLogger(__name__)
-
-HASH_SHIFT = sys.maxsize + 1  # Amount hash values must be shifted to avoid negative numbers
 
 
 def get_rawx_record_type(data: Union[List[Any], List[List[Any]]]) -> DataSetType:
