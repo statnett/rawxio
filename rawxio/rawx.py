@@ -53,6 +53,8 @@ def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
     result = {}
     for key, d in data["network"].items():
         data = d["data"]
+        if not data:
+            continue
         if get_rawx_record_type(data) == DataSetType.PARAMETER_SET:
             data = [data]
         df = pd.DataFrame(data, columns=d["fields"])
@@ -65,7 +67,7 @@ def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
             # The frame has primary keys. We produce a hash value to use for index based
             # on the primary keys
             pk_fields = list(set(get_pk_fields(key)).intersection(df.columns))
-            index = [uuid(t) for t in df[sorted(pk_fields)].itertuples()]
+            index = [uuid(t) for t in df[sorted(pk_fields)].itertuples(name=None, index=False)]
             df = df.set_index(pd.Index(index, name="uid"))
         result[key] = df
     return result
