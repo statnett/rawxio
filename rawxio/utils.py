@@ -25,7 +25,7 @@ def one2zero_indexed(
     The format of the dict is the same as returned by read_rawx (or passed to write_rawx)
     """
     for k, df in data.items():
-        data[k] = shift_array_indices(df, 1)
+        data[k] = shift_array_indices(df, 1, cols)
     return data
 
 
