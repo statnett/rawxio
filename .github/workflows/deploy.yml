@@ -1,3 +1,4 @@
+---
 name: Deploy to PyPI
 
 on:
@@ -9,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: Get full python version
         id: full-python-version
@@ -22,9 +23,9 @@ jobs:
         run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
 
       - name: Install and configure Poetry
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: 1.2.1
+          poetry-version: 1.8.3
 
       - name: Install dynamic versioning
         run: poetry self add "poetry-dynamic-versioning[plugin]"

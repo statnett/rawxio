@@ -1,11 +1,9 @@
-"""Convert between base case and PSS/E rawx format.
+"""Convert between base case and PSS/E rawx format."""
 
-"""
 import hashlib
 import json
-import logging
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any
 from uuid import UUID
 
 import pandas as pd
@@ -18,10 +16,8 @@ from rawxio.data_model import (
     has_primary_key,
 )
 
-logger = logging.getLogger(__name__)
 
-
-def get_rawx_record_type(data: Union[List[Any], List[List[Any]]]) -> DataSetType:
+def get_rawx_record_type(data: list[Any] | list[list[Any]]) -> DataSetType:
     return DataSetType.DATA_SET if isinstance(data[0], list) else DataSetType.PARAMETER_SET
 
 
@@ -31,10 +27,10 @@ def uuid(value: Any) -> str:
     return str(UUID(bytes=h.digest()))
 
 
-def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
-    """
-    Read data from rawx format. The index of the returned dataframe is constructed in the
-    following priotized order
+def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
+    """Read data from rawx format.
+
+    The index of the returned dataframe is constructed in the following priotized order
 
     1. mrid (Master Resource Identifier) is used if present in a column
     2. uid (Unique Identifier) is used if present in a column
@@ -45,9 +41,10 @@ def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
     If a dataset has defined primary keys in the RAWX
     documentation, an index constructed by hashing the tuple of primary keys is added.
     The name of index is uid (Unique Identifier). If an uid alrady exists,
-    it will be used as index
+    it will be used as index.
+
     """
-    with open(fname, "r") as infile:
+    with open(fname) as infile:
         data = json.load(infile)
 
     result = {}
@@ -73,10 +70,10 @@ def read_rawx(fname: Path) -> Dict[str, pd.DataFrame]:
     return result
 
 
-def write_rawx(fname: Path, data: Dict[str, pd.DataFrame]):
-    """
-    Write dataframes to rawx format. If a dataframe as a named index, it will be included
-    as a regular column
+def write_rawx(fname: Path, data: dict[str, pd.DataFrame]) -> None:
+    """Write dataframes to rawx format.
+
+    If a dataframe as a named index, it will be included as a regular column
     """
     rawx_data = {}
     for k, df in data.items():
@@ -94,7 +91,7 @@ def write_rawx(fname: Path, data: Dict[str, pd.DataFrame]):
         json.dump({"network": rawx_data}, out, indent=4)
 
 
-def raise_on_missing_required_field(name: str, df: pd.DataFrame):
+def raise_on_missing_required_field(name: str, df: pd.DataFrame) -> None:
     req_fields = set(get_required_fields(name))
     if not req_fields.issubset(set(df.columns)):
         raise ValueError(

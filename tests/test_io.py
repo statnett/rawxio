@@ -20,14 +20,14 @@ def test_read():
     assert all(result[k].index.name == "uid" for k in with_uid)
 
 
-def test_read_write_round_trip(tmpdir):
+def test_read_write_round_trip(tmpdir: Path):
     result = read_rawx(minimal_rawx())
     outfname = tmpdir / "out.json"
 
     write_rawx(outfname, result)
     result2 = read_rawx(outfname)
     assert result.keys() == result2.keys()
-    assert all(result[k].equals(result2[k]) for k in result.keys())
+    assert all(result[k].equals(result2[k]) for k in result)
 
 
 def test_array_index_shifting():
@@ -35,10 +35,10 @@ def test_array_index_shifting():
     dfs = deepcopy(result)
 
     # Make sure all dfs where deep-copied
-    assert all(dfs[k] is not result[k] for k in result.keys())
+    assert all(dfs[k] is not result[k] for k in result)
     dfs = one2zero_indexed(dfs)
     dfs = zero2one_indexed(dfs)
-    assert all(dfs[k].equals(result[k]) for k in result.keys())
+    assert all(dfs[k].equals(result[k]) for k in result)
 
 
 def test_raise_on_missing():
@@ -53,7 +53,7 @@ def test_raise_on_missing():
 
 
 @pytest.mark.parametrize("index_name", ["mrid", "uid"])
-def test_read_pick_up_index(tmpdir, index_name):
+def test_read_pick_up_index(tmpdir: Path, index_name: list[str]):
     df = pd.DataFrame({"ibus": 1}, index=pd.Index(["0xab"], name=index_name))
     out = tmpdir / "rawx.json"
     write_rawx(out, {"bus": df})

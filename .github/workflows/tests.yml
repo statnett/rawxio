@@ -1,3 +1,4 @@
+---
 name: Tests
 
 on: [push, pull_request]
@@ -7,21 +8,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: '3.10'
 
       - name: Get full python version
         id: full-python-version
         run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
 
       - name: Install and configure Poetry
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: 1.2.1
+          poetry-version: 1.8.3
 
       - name: Set poetry virtualenv to local
         run: poetry config virtualenvs.in-project true
@@ -45,21 +46,21 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest ]
-        python-version: [ '3.9', '3.10']
-        poetry-version: [ 1.2.1 ]
+        os: [ubuntu-latest]
+        python-version: ['3.10', '3.11', '3.12']
+        poetry-version: [1.8.3]
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install and configure Poetry
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v3.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
 
@@ -82,15 +83,15 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Run pytest
-        if: ${{ ( runner.os != 'Linux' ) || ( matrix.python-version  != '3.9' ) }}
+        if: ${{ ( runner.os != 'Linux' ) || ( matrix.python-version  != '3.10' ) }}
         run: poetry run pytest -q tests
 
       - name: Run pytest with coverage
-        if: ${{ ( runner.os == 'Linux' ) && ( matrix.python-version  == '3.9' ) }}
+        if: ${{ ( runner.os == 'Linux' ) && ( matrix.python-version  == '3.10' ) }}
         run: poetry run pytest -q --cov=rawxio --cov-report=xml tests
 
       - name: Upload coverage
-        if: ${{ ( runner.os == 'Linux' ) && ( matrix.python-version  == '3.9' ) }}
+        if: ${{ ( runner.os == 'Linux' ) && ( matrix.python-version  == '3.10' ) }}
         uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml

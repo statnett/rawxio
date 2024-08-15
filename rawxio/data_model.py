@@ -1,5 +1,4 @@
 from enum import Enum, auto
-from typing import List
 
 REQUIRED_PK_FIELDS = {
     "bus": ["ibus"],
@@ -66,11 +65,11 @@ REQUIRED_NON_PK_FIELDS = {
 }
 
 
-def get_pk_fields(name: str) -> List[str]:
+def get_pk_fields(name: str) -> list[str]:
     return REQUIRED_PK_FIELDS.get(name, []) + OPTIONAL_PK_FIELDS.get(name, [])
 
 
-def get_required_fields(name: str) -> List[str]:
+def get_required_fields(name: str) -> list[str]:
     return REQUIRED_PK_FIELDS.get(name, []) + REQUIRED_NON_PK_FIELDS.get(name, [])
 
 
@@ -82,9 +81,7 @@ PARAMETER_SETS = {"caseid", "general", "gauss", "newton", "adjust", "tysl", "sol
 
 
 class DataSetType(Enum):
-    """
-    Rawx has two record types. ParameterSet and DataSet
-    """
+    """Rawx has two record types. ParameterSet and DataSet."""
 
     PARAMETER_SET = auto()
     DATA_SET = auto()
