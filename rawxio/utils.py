@@ -10,7 +10,7 @@ def shift_array_indices(
     columns = list(cols.intersection(df.columns))
     if not cols:
         return df
-    df[columns] = df[columns].applymap(lambda x: x + amount)
+    df[columns] = df[columns].map(lambda x: x + amount)
     return df
 
 
