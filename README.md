@@ -22,10 +22,8 @@ import rawxio
 
 ## Development
 
-Dependencies for the project are managed with poetry. To install all dependencies run:
+Dependencies for the project are managed with uv. To install all dependencies run:
 
 ```
-poetry install
+uv sync
 ```
-
-Remember that when developing a library it is *not* recommended to commit the `poetry.lock` file.

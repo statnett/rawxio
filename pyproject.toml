@@ -1,26 +1,28 @@
-[tool.poetry]
+[project]
 name = "rawxio"
-version = "0.0.0"
 description = "Import/Export rawx"
-authors = ["Statnett Datascience <Datascience.Drift@Statnett.no>"]
-repository = "https://github.com/statnett/rawxio.git"
+authors = [{name="Statnett DataScience", email="Datascience.Drift@Statnett.no"}]
+requires-python = ">=3.10"
+dynamic = ["version"]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pandas = "*"
+dependencies = [
+  "pandas",
+]
 
-[tool.poetry.dev-dependencies]
-coverage = { version = "*", extras = ['toml'] }
-mock = "*"
-ruff = "*"
-pre-commit = "*"
-pytest = ">= 6"  # needs pyproject.toml support
-pytest-cov = "*"
-pytest-integration = "*"
+[tool.uv]
+dev-dependencies = [
+  "ruff",
+  "pre-commit",
+  "pytest",
+  "pytest-cov",
+  "pytest-integration",
+]
+
+[tool.setuptools_scm]
+version_scheme="release-branch-semver"
+local_scheme = "no-local-version"
 
 [tool.ruff]
-# Assume Python 3.10
-target-version = "py310"
 line-length = 100
 
 [tool.ruff.format]
@@ -28,7 +30,7 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 
-select = [
+extend-select = [
   "A", # flake8-builtins
   "ANN", # flake8-annotations
   "ARG", # flake8-unused-arguments
@@ -63,7 +65,7 @@ select = [
 ignore = ['S101', 'COM812', 'ANN101', 'ANN102', 'ANN401', 'TRY003', 'D100',  'D101', 'D102', 'D103', 'D104', 'D105', 'D107']
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+fixable = ["ALL"]
 unfixable = []
 
 # Exclude a variety of commonly ignored directories.
@@ -101,22 +103,9 @@ convention = "google"
 "docs/conf.py" = ["A001"]
 "tests/test*.py" = ["ANN201"]
 
-[tool.ruff.lint.flake8-import-conventions]
-[tool.ruff.lint.flake8-import-conventions.aliases]
-# Declare the default aliases.
-numpy = "np"
-pandas = "pd"
-scipy = "sp"
-
 [tool.ruff.lint.isort]
 known-first-party = []
 known-local-folder = ["abot_opf", "tests"]
-
-[tool.poetry-dynamic-versioning]
-enable = true
-vcs = "git"
-style = "semver"
-pattern = "^(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revision>\\d+)?))?$"
 
 [tool.coverage.report]
 # Regexes for lines to exclude from consideration
@@ -147,7 +136,6 @@ markers = [
 filterwarnings = [
 ]
 
-
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
