@@ -4,95 +4,35 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  Linting:
+  lint:
     runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Get full python version
-        id: full-python-version
-        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
-
-      - name: Install and configure Poetry
-        uses: abatilo/actions-poetry@v3.0.0
-        with:
-          poetry-version: 1.8.3
-
-      - name: Set poetry virtualenv to local
-        run: poetry config virtualenvs.in-project true
-
-      - name: Set up cache
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install dependencies
-        run: poetry install --no-interaction
-
-      - name: Linting
-        run: poetry run pre-commit run --all-files
-
-  Tests:
-    needs: Linting
-    name: ${{ matrix.os }} / ${{ matrix.python-version }}
     strategy:
-      fail-fast: true
       matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.10', '3.11', '3.12']
-        poetry-version: [1.8.3]
-
-    runs-on: ${{ matrix.os }}
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        with:
+          fetch-depth: 0
+      - name: Install the latest version of uv and set the python version
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Run linting
+        run: |
+          uv run pre-commit run --all-files
 
-      - name: Install and configure Poetry
-        uses: abatilo/actions-poetry@v3.0.0
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
         with:
-          poetry-version: ${{ matrix.poetry-version }}
-
-      - name: Set poetry virtualenv to local
-        run: poetry config virtualenvs.in-project true
-
-      - name: Get full python version
-        id: full-python-version
-        shell: bash
-        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
-
-      - name: Set up cache
-        uses: actions/cache@v3
-        id: cache
+          fetch-depth: 0
+      - name: Install the latest version of uv and set the python version
+        uses: astral-sh/setup-uv@v5
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install dependencies
-        run: poetry install --no-interaction
-
-      - name: Run pytest
-        if: ${{ ( runner.os != 'Linux' ) || ( matrix.python-version  != '3.10' ) }}
-        run: poetry run pytest -q tests
-
-      - name: Run pytest with coverage
-        if: ${{ ( runner.os == 'Linux' ) && ( matrix.python-version  == '3.10' ) }}
-        run: poetry run pytest -q --cov=rawxio --cov-report=xml tests
-
-      - name: Upload coverage
-        if: ${{ ( runner.os == 'Linux' ) && ( matrix.python-version  == '3.10' ) }}
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage.xml
-          fail_ci_if_error: true
+          python-version: ${{ matrix.python-version }}
+      - name: Test with python ${{ matrix.python-version }}
+        run: uv run --frozen pytest
