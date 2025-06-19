@@ -11,8 +11,6 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
-  "ruff",
-  "pre-commit",
   "pytest",
   "pytest-cov",
   "pytest-integration",
