@@ -44,7 +44,7 @@ def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
     it will be used as index.
 
     """
-    with open(fname) as infile:
+    with fname.open() as infile:
         data = json.load(infile)
 
     result = {}
@@ -79,7 +79,7 @@ def write_rawx(fname: Path, data: dict[str, pd.DataFrame]) -> None:
     for k, df in data.items():
         if df.index.name:
             # If there is a named index, make it a regular column
-            df = df.reset_index()
+            df = df.reset_index()  # noqa: PLW2901
         raise_on_missing_required_field(k, df)
         fields = df.columns.tolist()
         d = df.to_dict(orient="split")["data"]
@@ -87,14 +87,19 @@ def write_rawx(fname: Path, data: dict[str, pd.DataFrame]) -> None:
             d = d[0]
         rawx_data[k] = {"fields": fields, "data": d}
 
-    with open(fname, "w") as out:
+    with fname.open("w") as out:
         json.dump({"network": rawx_data}, out, indent=4)
+
+
+class MissingRequiredFieldError(ValueError):
+    def __init__(self, name: str, req_fields: set[str], df: pd.DataFrame) -> None:
+        super().__init__(
+            f"The following fields must be present for data frame {name}: "
+            f"{req_fields}. Got {df.columns.tolist()}"
+        )
 
 
 def raise_on_missing_required_field(name: str, df: pd.DataFrame) -> None:
     req_fields = set(get_required_fields(name))
     if not req_fields.issubset(set(df.columns)):
-        raise ValueError(
-            f"The following fields must be present for data frame {name}: "
-            f"{req_fields}. Got {df.columns.tolist()}"
-        )
+        raise MissingRequiredFieldError(name, req_fields, df)

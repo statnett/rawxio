@@ -4,17 +4,22 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from rawxio.rawx import raise_on_missing_required_field, read_rawx, write_rawx
+from rawxio.rawx import (
+    MissingRequiredFieldError,
+    raise_on_missing_required_field,
+    read_rawx,
+    write_rawx,
+)
 from rawxio.utils import one2zero_indexed, zero2one_indexed
 
 
 def minimal_rawx() -> Path:
-    return Path(__file__).parent / "data/minimal_rawx.json"
+    return Path(__file__).parent / "data" / "minimal_rawx.json"
 
 
 def test_read():
     result = read_rawx(minimal_rawx())
-    assert len(result) == 5
+    assert len(result) == 5  # noqa: PLR2004
 
     with_uid = ("bus", "load", "generator", "acline")
     assert all(result[k].index.name == "uid" for k in with_uid)
@@ -44,7 +49,7 @@ def test_array_index_shifting():
 def test_raise_on_missing():
     df = pd.DataFrame({"a": []})
 
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(MissingRequiredFieldError) as exc:
         raise_on_missing_required_field("bus", df)
 
     msg = "The following fields must be present for data frame bus: {'ibus'}. Got ['a']"
