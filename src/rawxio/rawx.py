@@ -30,7 +30,7 @@ def uuid(value: Any) -> str:
 def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
     """Read data from rawx format.
 
-    The index of the returned dataframe is constructed in the following priotized order
+    The index of the returned dataframe is constructed in the following prioritized order
 
     1. mrid (Master Resource Identifier) is used if present in a column
     2. uid (Unique Identifier) is used if present in a column
@@ -40,7 +40,7 @@ def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
 
     If a dataset has defined primary keys in the RAWX
     documentation, an index constructed by hashing the tuple of primary keys is added.
-    The name of index is uid (Unique Identifier). If an uid alrady exists,
+    The name of index is uid (Unique Identifier). If an uid already exists,
     it will be used as index.
 
     """
