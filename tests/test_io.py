@@ -17,20 +17,26 @@ def minimal_rawx() -> Path:
     return Path(__file__).parent / "data" / "minimal_rawx.json"
 
 
-def test_read():
-    result = read_rawx(minimal_rawx())
+@pytest.mark.parametrize("encoding", ["utf8", "latin8", "cp1252", None])
+def test_read(encoding: str | None, tmpdir: Path):
+    # Make a copy of the RAWX-file with the wanted encoding
+    rawx_file = tmpdir / "rawx_file"
+    rawx_file.write_text(minimal_rawx().read_text(), encoding=encoding)
+
+    result = read_rawx(rawx_file, encoding=encoding)
     assert len(result) == 5  # noqa: PLR2004
 
     with_uid = ("bus", "load", "generator", "acline")
     assert all(result[k].index.name == "uid" for k in with_uid)
 
 
-def test_read_write_round_trip(tmpdir: Path):
+@pytest.mark.parametrize("encoding", ["utf8", "latin8", "cp1252", None])
+def test_read_write_round_trip(tmpdir: Path, encoding: str | None):
     result = read_rawx(minimal_rawx())
     outfname = tmpdir / "out.json"
 
-    write_rawx(outfname, result)
-    result2 = read_rawx(outfname)
+    write_rawx(outfname, result, encoding=encoding)
+    result2 = read_rawx(outfname, encoding=encoding)
     assert result.keys() == result2.keys()
     assert all(result[k].equals(result2[k]) for k in result)
 

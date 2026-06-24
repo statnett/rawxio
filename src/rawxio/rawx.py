@@ -27,7 +27,7 @@ def uuid(value: Any) -> str:
     return str(UUID(bytes=h.digest()))
 
 
-def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
+def read_rawx(fname: Path, encoding: str | None = None) -> dict[str, pd.DataFrame]:
     """Read data from rawx format.
 
     The index of the returned dataframe is constructed in the following prioritized order
@@ -44,7 +44,7 @@ def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
     it will be used as index.
 
     """
-    with fname.open() as infile:
+    with fname.open(encoding=encoding) as infile:
         data = json.load(infile)
 
     result = {}
@@ -70,7 +70,7 @@ def read_rawx(fname: Path) -> dict[str, pd.DataFrame]:
     return result
 
 
-def write_rawx(fname: Path, data: dict[str, pd.DataFrame]) -> None:
+def write_rawx(fname: Path, data: dict[str, pd.DataFrame], encoding: str | None = None) -> None:
     """Write dataframes to rawx format.
 
     If a dataframe as a named index, it will be included as a regular column
@@ -87,7 +87,7 @@ def write_rawx(fname: Path, data: dict[str, pd.DataFrame]) -> None:
             d = d[0]
         rawx_data[k] = {"fields": fields, "data": d}
 
-    with fname.open("w") as out:
+    with fname.open("w", encoding=encoding) as out:
         json.dump({"network": rawx_data}, out, indent=4)
 
 
