@@ -39,15 +39,15 @@ precision = 2
 branch = true
 source = ["rawxio"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
+filterwarnings = []
 log_file = "pytest.log"
-log_level = "DEBUG"
 log_file_format = "%(asctime)s - %(name)s - %(levelname)s: %(message)s"
-norecursedirs = "_build tmp*  __pycache__ src prof wheel_files"
+log_level = "DEBUG"
 markers = [
   "integration: Mark test as an integration test",
 ]
-filterwarnings = []
+norecursedirs = ["__pycache__", "_build", "prof", "src", "tmp*", "wheel_files"]
 
 [tool.ruff]
 line-length = 100
