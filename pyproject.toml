@@ -60,6 +60,7 @@ extend-select = ["ALL"]
 ignore = [
   "S101",
   "COM812",
+  "CPY001",
   "ANN401",
   "TRY003",
   "D100",
