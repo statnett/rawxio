@@ -64,7 +64,9 @@ def read_rawx(fname: Path, encoding: str | None = None) -> dict[str, pd.DataFram
             # The frame has primary keys. We produce a hash value to use for index based
             # on the primary keys
             pk_fields = list(set(get_pk_fields(key)).intersection(df.columns))
-            index = [uuid(t) for t in df[sorted(pk_fields)].itertuples(name=None, index=False)]
+            index = [
+                uuid((key, *t)) for t in df[sorted(pk_fields)].itertuples(name=None, index=False)
+            ]
             df = df.set_index(pd.Index(index, name="uid"))
         result[key] = df
     return result
